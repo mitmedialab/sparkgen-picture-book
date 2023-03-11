@@ -11,11 +11,6 @@ npm install
 # serve with hot reload at localhost:8080
 npm run dev
 
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
@@ -36,3 +31,15 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 **Returns**
 
 - An object containing the completion
+
+## Deploy Site
+Setup by following [Deploying Vue App to Github Pages](https://learnvue.co/articles/deploy-vue-to-github-pages) instructions.
+
+    # build for production with minification
+    npm run build
+
+    # build for production and view the bundle analyzer report
+    npm run build --report
+
+    # update remote gh-pages and trigger GH actions to redeploy page
+    git subtree push --prefix dist origin gh-pages
