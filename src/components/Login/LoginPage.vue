@@ -34,7 +34,7 @@ export default {
   },
   data () {
     return {
-      clientId: '487017077228-2832pj64kq42oog2nf076jkc1i839vu1.apps.googleusercontent.com'
+      clientId: '578852570402-u65ldlou42ecup68pus2i7nis5k26j0m.apps.googleusercontent.com'
     }
   },
   watch: {
