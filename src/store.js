@@ -3,6 +3,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import Page from './Page';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage'
+import imagesRef from './firebase/init';
 
 Vue.use(Vuex);
 
@@ -13,8 +15,19 @@ Vue.use(Vuex);
  */
  const store = new Vuex.Store({
     state: {
-      username: "",
+      userId: "",
+      uniqueId: "",
+      apikey: "",
+      apiKeyFirebase: "",
+      authDomainFirebase: "",
+      projectIdFirebase: "",
+      storageBucketFirebase: "",
+      messagingSenderIdFirebase: "",
+      appIdFirebase: "",
+      measurementIdFirebase: "",
+      password: "",
       currentTitle: "", // the current title for the page being worked on
+      titleImage: "", // the image on the title page
       pages: {}, // holds all of the pages currently made
       currentSentence: "", // the current sentence being worked on
       alerts: {}, // global success/error messages encountered during submissions to non-visible forms
@@ -35,11 +48,27 @@ Vue.use(Vuex);
              */
             state.currentTitle = payload;
         },
-        addUsername(state, payload) {
+        addApiKey(state, payload) {
             /**
-             * Add a username for the user editing the story
+             * Add a api key for the user editing the story
+             * payload: {apiKey: string
+             *           apiKeyFirebase: string
+             *           authDomainFirebase: string
+             *           projectIdFirebase: string
+             *           storageBucketFirebase: string
+             *           messagingSenderIdFirebase: string
+             *           appIdFirebase: string
+             *           measurementIdFirebase: string}
              */
-            state.username = payload;
+            state.apikey = payload.apiKey;
+            state.apiKeyFirebase = payload.apiKeyFirebase;
+            state.authDomainFirebase = payload.authDomainFirebase;
+            state.projectIdFirebase = payload.projectIdFirebase;
+            state.storageBucketFirebase = payload.storageBucketFirebase;
+            state.messagingSenderIdFirebase = payload.messagingSenderIdFirebase;
+            state.appIdFirebase = payload.appIdFirebase;
+            state.measurementIdFirebase = payload.measurementIdFirebase;
+            state.password = payload.password;
         },
         changeSentence(state, payload) {
           /**
@@ -84,7 +113,29 @@ Vue.use(Vuex);
           state.pages[Object.keys(state.pages).length + 1] = page;
           state.currentSentence = '';
         },
+        editNextSentence(state, payload) {
+          /**
+           * Edits in the next sentence on the page
+           */
+          state.pages[payload.pageNum].nextCaption = payload.sentence;
+        },
+        deletePage(state, payload) {
+          /**
+           * Deletes contents of a page based on the specified page number
+           * payload = {pageNumber: int}
+           */
+          delete state.pages[payload.pageNumber];
+          let newPages = {}
+          for (const [key, value] of Object.entries(state.pages)) {
+            if (key > payload.pageNumber) {
+              newPages[key - 1] = value;
+            } else {
+              newPages[key] = value;
+            }
+          }
+          state.pages = newPages;
 
+        },
         refreshGeneratedSentence(state, payload) {
           /**
            * Stores the generated sentence for a given page
@@ -95,9 +146,29 @@ Vue.use(Vuex);
         refreshGeneratedImages(state, payload) {
           /**
            * Stores all the generated images for a page
-           * payload = {pageNum: int, images: []}
+           * payload = {pageNum: int, images: [], imagesref: StorageReference}
            */
-           state.pages[payload.pageNum].allImages = payload.images;
+
+          let images = [];
+          let count = 1;
+          for (let currentImage of payload.images) {
+            const storageId = new Date().getTime().toString();
+            // currentImage = currentImage.substr(currentImage.indexOf(",") + 1);
+            let newestRef = ref(payload.imagesRef, storageId);
+            newestRef = ref(newestRef, count.toString());
+            count += 1;
+            uploadString(newestRef, currentImage, "base64").then(async (snapshot) => {
+              images.push(await getDownloadURL(snapshot.ref));
+            })
+
+            state.pages[payload.pageNum].allImages = images;
+          }
+        },
+        refreshTitleImage(state, payload) {
+          /**
+           * Stores the title page image
+           */
+          state.titleImage = payload;
         },
         refreshSelectedImage(state, payload) {
           /**
@@ -105,6 +176,12 @@ Vue.use(Vuex);
            * payload = {pageNum: int, image: number}
            */
            state.pages[payload.pageNum].selectedImage = payload.image;
+        },
+        updateUserId(state, payload) {
+          state.userId = payload;
+        },
+        updateUniqueId(state, payload) {
+          state.uniqueId = payload;
         }
     },
     plugins: [createPersistedState({storage: window.sessionStorage})]

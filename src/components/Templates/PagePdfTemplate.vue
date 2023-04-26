@@ -5,7 +5,7 @@
             v-if="(selectedImage > -1)">
             <img
             class="picture-box regular-image"
-            :src="'data:image/jpeg;base64,' + $store.state.pages[pageNumber].allImages[$store.state.pages[pageNumber].selectedImage]"/>
+            :src="$store.state.pages[pageNumber].allImages[$store.state.pages[pageNumber].selectedImage]"/>
         </div>
         <h1 class="box-text">
             {{ $store.state.pages[pageNumber].caption }}

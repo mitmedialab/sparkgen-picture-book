@@ -29,7 +29,7 @@
                     @click="imgClicked(0)"
                     class="box regular-image"
                     :style="{'box-shadow': selected[0] ? '0px 0px 10px 10px yellow' : ''}"
-                    :src="'data:image/jpeg;base64,' + images[0]"
+                    :src="images[0]"
                 />
             </section>
             <section class="box">
@@ -37,21 +37,21 @@
                     @click="imgClicked(1)"
                     class="box regular-image"
                     :style="{'box-shadow': selected[1] ? '0px 0px 10px 10px yellow' : ''}"
-                    :src="'data:image/jpeg;base64,' + images[1]"/>
+                    :src="images[1]"/>
             </section>
             <section class="box">
                 <img
                     @click="imgClicked(2)"
                     class="box regular-image"
                     :style="{'box-shadow': selected[2] ? '0px 0px 10px 10px yellow' : ''}"
-                    :src="'data:image/jpeg;base64,' + images[2]"/>
+                    :src="images[2]"/>
             </section>
             <section class="box">
                 <img
                     @click="imgClicked(3)"
                     class="box regular-image"
                     :style="{'box-shadow': selected[3] ? '0px 0px 10px 10px yellow' : ''}"
-                    :src="'data:image/jpeg;base64,' + images[3]"/>
+                    :src="images[3]"/>
             </section>
         </section>
     </div>
@@ -60,6 +60,8 @@
 
 <script>
 /* eslint-disable */
+// 'data:image/jpeg;base64,'
+import imagesRef from '../../firebase/init'
 export default {
     name: 'PictureDisplay',
     props: {
@@ -82,14 +84,14 @@ export default {
         }
     },
     watch: {
-        changeCount: function() {
+        changeCount: async function() {
             // if there are no generated images but there is a sentence then we want to generate
             // if there are generated images but the sentence is different then we want to generate
             if (this.$store.state.currentSentence !== '') {
                 this.generateImages();
                 this.loading = true;
             } else {
-                this.images = this.$store.state.pages[this.pageNum].allImages
+                this.images = this.$store.state.pages[this.pageNum].allImages;
             }
         },
         pageNum (val) {
@@ -105,17 +107,13 @@ export default {
             this.selected = [false, false, false, false];
             this.selected[imgIndex] = true;
             this.$store.commit("refreshSelectedImage", {pageNum: this.pageNum, image: imgIndex});
-            // firebase doc
-            // await updateDoc(doc(db, this.$store.state.username, this.$store.state.title), {
-            //     image: imgIndex
-            //   })
         },
         generateImages() {
             const params = {
                 method: 'POST',
                 message: 'Successfully generated images',
                 body: JSON.stringify({
-                    prompt: 'Generate a kid friendly image of the following sentence: ' + this.$store.state.currentSentence,
+                    prompt: 'An image that could be in a picture book of the following sentence: ' + this.$store.state.currentSentence,
                     n: 4,
                     size: '256x256',
                     response_format: 'b64_json',
@@ -127,7 +125,7 @@ export default {
             const options = {
                 method: params.method, headers: 
                 {'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.VUE_APP_OPENAI_KEY}`,
+                'Authorization': `Bearer ${this.$store.state.apikey}`,
                 'Access-Control-Allow-Origin': '*'}
             };
             if (params.body) {
@@ -144,21 +142,19 @@ export default {
                 const res = await r.json();
                 this.selected = [false, false, false, false];
                 this.images = res.data.map(data_json => data_json.b64_json);
-                this.$store.commit("refreshGeneratedImages", {pageNum: this.pageNum, images: this.images})
+                this.$store.commit("refreshGeneratedImages", {pageNum: this.pageNum, images: this.images, imagesRef: imagesRef})
                 const message = 'Successfully generated images!';
                 this.$store.commit('alert', {
                     message: message, status: 'success'
                 });
+                this.images = this.$store.state.pages[this.pageNum].allImages;
                 this.loading = false;
-                // firebase doc
-                // await updateDoc(doc(db, this.$store.state.username, this.$store.state.title), {
-                //     images: this.images
-                //   })
             } catch (e) {
                 const message = 'There was an error fetching images';
                 this.$store.commit('alert', {
                     message: message, status: 'error'
                 });
+                this.loading = false;
             }
         }
     }

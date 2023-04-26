@@ -9,20 +9,28 @@
                     class="picture-box">
                     <img
                         class="picture-box regular-image"
-                        :src="'data:image/jpeg;base64,' + $store.state.pages[pageNumber].allImages[$store.state.pages[pageNumber].selectedImage]"/>
+                        :src="$store.state.pages[pageNumber].allImages[$store.state.pages[pageNumber].selectedImage]"/>
                 </div>
                 <h1 class="box-text">
                     {{ $store.state.pages[pageNumber].caption }}
                 </h1>
             </div>
         </div>
+        <DeleteButton
+            :pageNumber="pageNumber"
+            :active="active"
+            @pageDeleted="pageDeleted">
+        </DeleteButton>
     </article>
 </template>
 
 <script>
 /* eslint-disable */
+import DeleteButton from '@/components/Page/DeleteButton.vue'
+
 export default {
     name: 'PageComponent',
+    components: {DeleteButton},
     props: {
         // Data from the stored freet
         pageNumber: {
@@ -41,20 +49,24 @@ export default {
     watch: {
         active: function(val) {
             const box = document.getElementById('box-' + this.pageNumber);
-            if (this.active) {
-                box.style.transform = 'translateY(-15px)';
-                box.style.boxShadow = 'rgba(0, 0, 0, 0.2) 0 4px 12px'
-            } else {
-                box.style.transform = 'translateY(0px)';
-                box.style.boxShadow = 'rgba(0, 0, 0, 0) 0 4px 12px';
+            if (box !== null) {
+                if (this.active) {
+                    box.style.transform = 'translateY(-15px)';
+                    box.style.boxShadow = 'rgba(0, 0, 0, 0.2) 0 4px 12px'
+                } else {
+                    box.style.transform = 'translateY(0px)';
+                    box.style.boxShadow = 'rgba(0, 0, 0, 0) 0 4px 12px';
+                }
             }
         }
     },
     mounted() {
         if (this.active) {
-            const box = document.getElementById(this.pageNumber);
-            box.style.transform = 'translateY(-15px)';
-            box.style.boxShadow = 'rgba(0, 0, 0, 0.2) 0 4px 12px'
+            const box = document.getElementById('box-' + this.pageNumber);
+            if (box !== null) {
+                box.style.transform = 'translateY(-15px)';
+                box.style.boxShadow = 'rgba(0, 0, 0, 0.2) 0 4px 12px'
+            }
         }
     },
     data() {
@@ -65,6 +77,9 @@ export default {
     methods: {
         boxClicked() {
             this.$emit('boxClicked', this.pageNumber);
+        },
+        pageDeleted() {
+            this.$emit('pageDeleted', this.pageNumber);
         }
     }
 }

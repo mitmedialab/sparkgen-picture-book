@@ -16,6 +16,14 @@ export default {
     if (Object.keys(this.$store.state.pages).length === 0) {
       this.$store.commit('createPage')
     }
+  },
+  watch: {
+    '$store.state.measurementIdFirebase': function() {
+      window.location.reload();
+    },
+    '$store.state.password': function() {
+      this.testCall();
+    }
   }
 }
 </script>

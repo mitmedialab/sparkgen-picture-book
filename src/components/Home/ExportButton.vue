@@ -29,6 +29,7 @@
                 v-for="index in Object.keys($store.state.pages).length"
                 :key="index">
                 <PagePdfTemplate
+                    v-if="$store.state.pages[index].caption !== ''"
                     :pageNumber="index"
                     :selectedImage="$store.state.pages[index].selectedImage"
                 />
@@ -58,19 +59,23 @@ export default {
         converter.html2Pdf = {
             html2canvas: {
                 useCORS: true,
+                allowTaint: true
             }
         };
-        // firebase document
-        // const docSnap = await getDoc(doc(db, this.nameDraft, this.draft))
-        // if (docSnap.exists()) {
-        //     this.pages = docSnap.data().pages
-        // } else {
-        //     this.pages = []
-        // }
     },
     methods: {
         exportPdf() {
             this.$refs.html2Pdf.generatePdf();
+            this.exportJson();
+        },
+        exportJson() {
+            const data = JSON.stringify(this.$store.state.pages)
+            const blob = new Blob([data], {type: 'text/plain'})
+            let a = document.createElement('a');
+            a.download = "storifAI_data.json";
+            a.href = window.URL.createObjectURL(blob);
+            a.click();
+            window.URL.revokeObjectURL(a.href);
         }
     }
 }
