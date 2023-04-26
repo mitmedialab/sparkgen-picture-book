@@ -37,9 +37,10 @@ Setup by following [Deploying Vue App to Github Pages](https://learnvue.co/artic
 
     # build for production with minification
     npm run build
-
-    # build for production and view the bundle analyzer report
     npm run build --report
+
+    # update and commit dist folder
+    git add dist && git commit -m 'adding dist subtree'
 
     # update remote gh-pages and trigger GH actions to redeploy page
     git subtree push --prefix dist origin gh-pages
