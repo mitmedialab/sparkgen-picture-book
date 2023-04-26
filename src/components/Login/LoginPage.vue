@@ -34,7 +34,7 @@ export default {
   },
   data () {
     return {
-      clientId: 'INSERT PROJECT CLIENT_ID'
+      clientId: '487017077228-2832pj64kq42oog2nf076jkc1i839vu1.apps.googleusercontent.com'
     }
   },
   watch: {
