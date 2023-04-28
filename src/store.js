@@ -17,6 +17,7 @@ Vue.use(Vuex);
     state: {
       userId: "",
       uniqueId: "",
+      jwtCredentials: "",
       apikey: "",
       apiKeyFirebase: "",
       authDomainFirebase: "",
@@ -176,6 +177,9 @@ Vue.use(Vuex);
            * payload = {pageNum: int, image: number}
            */
            state.pages[payload.pageNum].selectedImage = payload.image;
+        },
+        updateJwtCreds(state, payload) {
+          state.jwtCredentials = payload;
         },
         updateUserId(state, payload) {
           state.userId = payload;

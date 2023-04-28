@@ -2,6 +2,7 @@
 /* eslint-disable no-new */
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref } from 'firebase/storage'
+import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import store from '../store.js'
 
 const firebaseConfig = {
@@ -14,6 +15,15 @@ const firebaseConfig = {
     measurementId: store.state.measurementIdFirebase
 }
 const app = initializeApp(firebaseConfig)
+
+// Authenticate user with firebase
+if (store.state.userId) {
+    const auth = getAuth(app)
+    const credential = GoogleAuthProvider.credential(
+        store.state.jwtCredentials
+    )
+    signInWithCredential(auth, credential)
+}
 
 // init firestore service
 const firebaseStorage = getStorage(app)
