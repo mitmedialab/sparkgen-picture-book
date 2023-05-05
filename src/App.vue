@@ -70,8 +70,8 @@ export default {
 .alerts {
     position: absolute;
     z-index: 99;
-    bottom: 0;
-    top: 100%;
+    top: 0;
+    bottom: 100%;
     left: 50%;
     transform: translate(-50%, 10%);
     width: 100%;

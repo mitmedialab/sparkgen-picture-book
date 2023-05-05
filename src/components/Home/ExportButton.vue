@@ -13,7 +13,7 @@
         :enable-download="true"
         :preview-modal="true"
         :paginate-elements-by-height="1122"
-        filename="picture-book"
+        filename="storifAI-book"
         :pdf-quality="2"
         :manual-pagination="false"
         pdf-format="a4"
@@ -29,7 +29,7 @@
                 v-for="index in Object.keys($store.state.pages).length"
                 :key="index">
                 <PagePdfTemplate
-                    v-if="$store.state.pages[index].caption !== ''"
+                    v-if="$store.state.pages[index].caption !== '' && $store.state.pages[index].selectedImage !== -1"
                     :pageNumber="index"
                     :selectedImage="$store.state.pages[index].selectedImage"
                 />
@@ -44,6 +44,8 @@
 import VueHtml2pdf from "vue-html2pdf";
 import PagePdfTemplate from "@/components/Templates/PagePdfTemplate";
 import TitlePageTemplate from "@/components/Templates/TitlePageTemplate";
+import { jsonRef } from '../../firebase/init'
+import { ref, uploadBytes } from 'firebase/storage'
 
 export default {
     name: 'ExportButton',
@@ -69,13 +71,11 @@ export default {
             this.exportJson();
         },
         exportJson() {
+            let newestRef = ref(jsonRef, this.$store.state.userId)
+            newestRef = ref(newestRef, new Date().toJSON())
             const data = JSON.stringify(this.$store.state.pages)
-            const blob = new Blob([data], {type: 'text/plain'})
-            let a = document.createElement('a');
-            a.download = "storifAI_data.json";
-            a.href = window.URL.createObjectURL(blob);
-            a.click();
-            window.URL.revokeObjectURL(a.href);
+            const blob = new Blob([data], {type: 'application/json'})
+            uploadBytes(newestRef, blob)
         }
     }
 }

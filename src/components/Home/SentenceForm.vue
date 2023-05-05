@@ -26,7 +26,6 @@ export default {
     data() {
         return {
             draft: this.$store.state.currentSentence,
-            alerts: {},
             constantPre: `This is a story about ${this.$store.state.currentTitle}. Write one more sentence of the story. The following is the most recent sentence of the story: `,
             sentences: ['This is the first page of the story, so there is no suggested sentence.'],
             previousSentence: `This is a story about ${this.$store.state.currentTitle}`
@@ -66,7 +65,7 @@ export default {
     methods: {
         addSentence() {
             const sentenceRegex = /[A-Za-z0-9 _.,!\"\'\/$]+/
-            if (sentenceRegex.test(this.draft) && this.draft.length <= 140) {
+            if (sentenceRegex.test(this.draft.trim()) && this.draft.trim().length <= 140) {
                 this.$store.commit('changeSentence', {pageNum: this.pageNum, sentence: this.draft.trim()});
                 this.$emit('sentenceEdited', true);
             } else {

@@ -42,7 +42,7 @@ export default {
     },
     watch: {
         changeCount: function() {
-            this.$store.commit('editNextSentence', {'pageNum': this.changedPage, 'sentence': this.draft});
+            this.$store.commit('editNextSentence', {'pageNum': this.changedPage, 'sentence': this.draft.trim()});
         },
         pageNum: function() {
             this.draft = this.$store.state.pages[this.pageNum].nextCaption ? this.$store.state.pages[this.pageNum].nextCaption : '';

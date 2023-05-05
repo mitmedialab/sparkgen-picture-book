@@ -39,10 +39,12 @@ export default {
 
 .box-text {
     text-align: center;
-    margin-top: 10em;
     font-size: 16px;
     white-space:normal;
     word-wrap:break-word;
+    height: 300px;
+    width: 600px;
+    margin-top: 8em;
 }
 
 .regular-image {

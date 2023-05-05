@@ -4,7 +4,6 @@ import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 import Page from './Page';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage'
-import imagesRef from './firebase/init';
 
 Vue.use(Vuex);
 
@@ -153,10 +152,8 @@ Vue.use(Vuex);
           let images = [];
           let count = 1;
           for (let currentImage of payload.images) {
-            const storageId = new Date().getTime().toString();
-            // currentImage = currentImage.substr(currentImage.indexOf(",") + 1);
-            let newestRef = ref(payload.imagesRef, storageId);
-            newestRef = ref(newestRef, count.toString());
+            let newestRef = ref(payload.imagesRef, state.userId);
+            newestRef = ref(newestRef, new Date().toJSON());
             count += 1;
             uploadString(newestRef, currentImage, "base64").then(async (snapshot) => {
               images.push(await getDownloadURL(snapshot.ref));

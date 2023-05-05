@@ -61,7 +61,7 @@
 <script>
 /* eslint-disable */
 // 'data:image/jpeg;base64,'
-import imagesRef from '../../firebase/init'
+import { imagesRef } from '../../firebase/init'
 export default {
     name: 'PictureDisplay',
     props: {
@@ -80,7 +80,6 @@ export default {
             selected: [false, false, false, false], // top_left, top_right, bottom_left, bottom_right
             images: this.$store.state.pages[this.pageNum].allImages ? this.$store.state.pages[this.pageNum].allImages : [],
             loading: false,
-            alerts: {}
         }
     },
     watch: {
