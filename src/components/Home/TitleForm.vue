@@ -36,19 +36,16 @@
     <section
         v-if="$store.state.apikey == ''"
         class="api-area">
-        <div>
-            <p>
-                Visit
-                <a href="https://platform.openai.com/account/api-keys">OpenAI</a>
-                to obtain your OpenAI Api Key
-            </p>
-            <p>
-                Visit
-                <a href="https://console.firebase.google.com/">Google Firebase Storage</a>
-                to create your own Firebase Storage
-            </p>
-        </div>
         <form @submit.prevent ="getEncryptedItems">
+            <input
+                class="title-content api-content"
+                :value="username"
+                type="text"
+                @input="username = $event.target.value"
+                maxlength="200"
+                placeholder="Username"
+                :required="true"
+            />
             <input
                 class="title-content api-content"
                 :value="password"
@@ -64,6 +61,35 @@
                 >Enter in your information
             </button>
         </form>
+
+      <div class="disclaimers">
+        <h3>By continuing, you agree to the following:</h3>
+        <li>
+          The content generated from this site is solely for personal use and
+          may not be used for commercial purposes without proper licensing or
+          permission.
+        </li>
+        <li>
+          You are responsible for ensuring that any generated content does not
+          infringe on any intellectual property rights, including but not
+          limited to copyright, trademarks, and publicity rights.
+        </li>
+        <li>
+          You are aware that this tool may produce content that is not
+          appropriate for all ages, and you are solely responsible for
+          determining the appropriateness of the content for their audience.
+        </li>
+        <li>
+          The tool may produce content that contains errors, inaccuracies, or
+          omissions, and you assume all risk associated with using the tool and
+          the resulting content.
+        </li>
+        <li>
+          The developer of the tool assumes no liability for any damages arising
+          from the use of the tool or the resulting content, including but not
+          limited to direct, indirect, incidental, and consequential damages.
+        </li>
+      </div>
     </section>
 </section>
 </template>
@@ -86,11 +112,12 @@ export default {
     },
     methods: {
         getEncryptedItems() {
+            this.$store.commit('updateUserId', this.username);
             const params = {
                         method: 'POST',
                         message: 'Successfully updated credentials',
                         body: JSON.stringify({
-                            username: this.$store.state.userId
+                            username: this.username
                         }),
             };
             this.request(params);
@@ -212,5 +239,15 @@ form {
 .title-font {
     font-size: 30px;
     margin-top: 1px;
+}
+
+.disclaimers {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  align-self: center;
 }
 </style>

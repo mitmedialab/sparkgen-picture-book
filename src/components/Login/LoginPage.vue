@@ -6,11 +6,13 @@
                 <h2>Login to StorifAI</h2>
             </header>
         </section>
-        <div style="display: flex; justify-content: center"
+        <!--
+          Removing Google login for user study version
+          <div style="display: flex; justify-content: center"
             id="google-login-btn"
             v-google-identity-login-btn="{ clientId, locale:'en' }">
             Continue with Google
-        </div>
+        </div>-->
         <section
           class="disclaimers">
           <h3>By continuing, you agree to the following:</h3>

@@ -15,7 +15,7 @@
         Add a title to begin a new story!
       </h2>
       <h2 v-if="!$store.state.apikey">
-        Enter in your API information to begin
+        Login to StorifAI
       </h2>
     </section>
     <TitleForm

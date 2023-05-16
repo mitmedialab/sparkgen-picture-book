@@ -2,7 +2,7 @@
 /* eslint-disable no-new */
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref } from 'firebase/storage'
-import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithCredential, signInAnonymously } from 'firebase/auth'
 import store from '../store.js'
 
 const firebaseConfig = {
@@ -16,13 +16,15 @@ const firebaseConfig = {
 }
 const app = initializeApp(firebaseConfig)
 
-// Authenticate user with firebase
-if (store.state.userId) {
+// Authenticate user with firebase - google login
+if (store.state.jwtCredentials) {
     const auth = getAuth(app)
-    const credential = GoogleAuthProvider.credential(
-        store.state.jwtCredentials
-    )
+    const credential = GoogleAuthProvider.credential(store.state.jwtCredentials)
     signInWithCredential(auth, credential)
+} else if (store.state.userId) {
+    // Authenticate user with firebase - saved firebase credentials
+    const auth = getAuth(app)
+    signInAnonymously(auth)
 }
 
 // init firestore service
