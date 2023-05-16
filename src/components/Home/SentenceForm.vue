@@ -11,10 +11,13 @@
     </section>
     <section>
         <p>Suggested sentences:</p>
-        <p v-for="(item, index) in sentences"
+        <p
+        v-if="!loading"
+        v-for="(item, index) in sentences"
             :key="index">
             {{ item }}
         </p>
+        <p v-if="loading">Suggested sentences are loading...</p>
     </section>
 </section>
 </template>
@@ -28,7 +31,8 @@ export default {
             draft: this.$store.state.currentSentence,
             constantPre: `This is a story about ${this.$store.state.currentTitle}. Write one more sentence of the story. The following is the most recent sentence of the story: `,
             sentences: ['This is the first page of the story, so there is no suggested sentence.'],
-            previousSentence: `This is a story about ${this.$store.state.currentTitle}`
+            previousSentence: `This is a story about ${this.$store.state.currentTitle}`,
+            loading: false
         }
     },
     props: {
@@ -48,6 +52,7 @@ export default {
         pageNum(val) {
             // if the suggested sentence has not been generated
             if (val !== 1 && this.$store.state.pages[val].generatedSentences.length === 0) {
+                this.loading = true;
                 this.previousSentence = this.$store.state.pages[val - 1].caption
                 this.previousSentence = this.constantPre + this.previousSentence;
                 this.generateSentence();
@@ -114,6 +119,7 @@ export default {
                 const res = await r.json();
                 this.sentences = res.choices.map(choice => choice.text);
                 this.$store.commit("refreshGeneratedSentence", {pageNum: this.pageNum, sentences: this.sentences});
+                this.loading = false;
             } catch (e) {
                 const message = 'There was an error fetching suggested sentences';
                 this.$store.commit('alert', {
